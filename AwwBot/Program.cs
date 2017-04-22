@@ -10,7 +10,7 @@ namespace AwwBot
     {
         static void Main(string[] args)
         {
-            DiscordBot bot = new DiscordBot();
+            AwwBot bot = new AwwBot();
         }
     }
 }
