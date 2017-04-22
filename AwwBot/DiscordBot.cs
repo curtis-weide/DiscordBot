@@ -2,6 +2,8 @@
 using Discord.Commands;
 using System;
 using System.IO;
+using RedditSharp;
+using System.Linq;
 
 namespace AwwBot
 {
@@ -32,6 +34,12 @@ namespace AwwBot
                 await e.Channel.SendMessage("For a r/aww picture, type !aww. For a r/rarepuppers picture, type !pupper. For a picture of Luna, type !Luna");
             });
 
+            commands.CreateCommand("aww").Do(async (e) =>
+            {
+                await e.Channel.SendMessage(RedditAww());
+            });
+
+
             commands.CreateCommand("Luna").Do(async (e) =>
             {
                 await e.Channel.SendFile(LunaPics());
@@ -43,6 +51,19 @@ namespace AwwBot
             });
         }
 
+        private void Log(object sender, LogMessageEventArgs e)
+        {
+            Console.WriteLine(e.Message);
+        }
+
+        private string RedditAww()
+        {
+            var reddit = new Reddit();
+            var subreddit = reddit.GetSubreddit("r/aww");
+            var post = subreddit.Posts.Where(x => !x.IsSelfPost && x.CreatedUTC >= DateTime.UtcNow.AddDays(-1)).Take(100);
+            return post.ElementAt(new Random().Next(0, 99)).Url.OriginalString;
+        }
+
         private string LunaPics()
         {
             var images = Directory.GetFiles("images");
@@ -50,9 +71,5 @@ namespace AwwBot
             return images[randomNumber];
         }
 
-        private void Log(object sender, LogMessageEventArgs e)
-        {
-            Console.WriteLine(e.Message);
-        }
     }
 }
