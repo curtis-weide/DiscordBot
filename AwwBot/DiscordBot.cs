@@ -39,6 +39,10 @@ namespace AwwBot
                 await e.Channel.SendMessage(RedditAww());
             });
 
+            commands.CreateCommand("pupper").Do(async (e) =>
+            {
+                await e.Channel.SendMessage(RedditPupper());
+            });
 
             commands.CreateCommand("Luna").Do(async (e) =>
             {
@@ -60,6 +64,14 @@ namespace AwwBot
         {
             var reddit = new Reddit();
             var subreddit = reddit.GetSubreddit("r/aww");
+            var post = subreddit.Posts.Where(x => !x.IsSelfPost && x.CreatedUTC >= DateTime.UtcNow.AddDays(-1)).Take(100);
+            return post.ElementAt(new Random().Next(0, 99)).Url.OriginalString;
+        }
+
+        private string RedditPupper()
+        {
+            var reddit = new Reddit();
+            var subreddit = reddit.GetSubreddit("r/rarepuppers");
             var post = subreddit.Posts.Where(x => !x.IsSelfPost && x.CreatedUTC >= DateTime.UtcNow.AddDays(-1)).Take(100);
             return post.ElementAt(new Random().Next(0, 99)).Url.OriginalString;
         }
